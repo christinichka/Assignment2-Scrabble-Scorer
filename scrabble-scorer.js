@@ -33,30 +33,30 @@ function oldScrabbleScorer(word) {
 
 // your job is to finish writing these functions and variables that we've named //
 // don't change the names or your program won't work as expected. //
-let word = "";
 
-function initialPrompt(word) {
-  console.log("Let's play some scrabble!" + "\n");
-  word = input.question("Enter a word to score: ");
-  return oldScrabbleScorer(word)
-};
-console.log(initialPrompt(word));
+let userWord = "";
+
+// Prompt user for a word to be scored
+function initialPrompt() {
+  userWord = input.question (`Let's play some scrabble!\n\nEnter a word to score: `);
+  return oldScrabbleScorer(userWord);
+}
+// console.log(initialPrompt(userWord));
 
 
 // Function takes a word as a parameter and returns a numerical score where each letter is worth 1 point
-let simpleScore = function(word) {
-  let score = 0
+function simpleScore(word) {
+  word = word.toUpperCase();
+  let score = 0;
   for (let i = 0; i < word.length; i++) {
     score += 1;
   }
   return score;
 }
-console.log(simpleScore(initialPrompt) + "\n");
-
-
 
 // Function the takes a word as a parameter and returns a score where each consonant is worth 1 point and each vowel is worth 3 points
-let vowelBonusScore = function(word) {
+function vowelBonusScore(word) {
+  word = word.toUpperCase();
   let score = 0;
   for (let i = 0; i < word.length; i++) {
     if (word[i] === vowels) {
@@ -67,28 +67,74 @@ let vowelBonusScore = function(word) {
   }
   return score;
 }
-console.log(vowelBonusScore(initialPrompt) + "\n");
 
 
+function scrabbleScore(word) {
+  word = word.toUppercase();
+  let score = 0;
+  for (let i = 0; i < word.length; i++) {
+  score += 1;
+  }
+  return score;
+}
 
-let scrabbleScore;
+// Individual Scoring Objects to hold the information about each scoring function
+let simpleScoreObj = {
+  name: 'Simple Score',
+  description: 'Each letter is worth 1 point.',
+  scorerFunction: simpleScore
+}
 
+let vowelBonusObj = {
+  name: 'Bonus Vowels',
+  description: 'Vowels are 3pts, consonants are 1 pt.',
+  scorerFunction: vowelBonusScore
+}
 
-// Organize all three scoring options into an array called scoringAlgorithms
-  // populate with three keys for each scoring object: name, description, scorerFunction
-const scoringAlgorithms = [];
+let scrabbleObj = {
+  name: 'Scrabble',
+  description: 'The traditional scoring algorithm.',
+  scorerFunction: scrabbleScore
+}
 
+// Array to organize the three scoring objects and their keys (name, description, scorerFunction)
+const scoringAlgorithms = [simpleScoreObj, vowelBonusObj, scrabbleObj];
 
-function scorerPrompt() {}
+// Let the user select which scoring algorithm to use when program scores a word.
+function scorerPrompt() {
+  let whichScorer = input.question(`Which scoring algorithm would you like to use?\n 0. Simple: One point per character\n 1. Vowel Bonus: Vowels are worth 3 points\n 2. Scrabble: Uses scrabble point system\nEnter 0, 1, or 2: `);
+  if (whichScorer === 0) {
+    console.log(`Score for '${userWord}' : ${scoringAlgorithms[0].scorerFunction(userWord)}`)
+  } else if (whichScorer === 1) {
+    console.log(`Score for '${userWord}' : ${scoringAlgorithms[1].scorerFunction(userWord)}`)
+  } else {
+    console.log(`Score for '${userWord}' : ${scoringAlgorithms[2].scorerFunction(userWord)}`)
+  }
+  return scoringAlgorithms[whichScorer];
+}
 
-function transform() {};
+// Use the oldPointStructure to write a new function so that a single search will identify the point value for each letter.
+function transform(oldPointStructure) {
+  // create an array to hold the point/alphabet objects
+  let newPointObj = {};
+  for (key in oldPointStructure) {
+    for (let i = 0; i < oldPointStructure[key].length; i++) {
+      newPointObj[(oldPointStructure[key][i].toLowerCase())] = Number(key);
+    }
+  }
+  oldPointStructure = newPointObj;
+  return oldPointStructure;
+};
 
-let newPointStructure;
+let newPointStructure = transform(oldPointStructure);
+newPointStructure[' '] = 0
+
 
 function runProgram() {
    initialPrompt();
-   
+   scorerPrompt();
 }
+
 
 // Don't write any code below this line //
 // And don't change these or your program will not run as expected //
@@ -104,4 +150,3 @@ module.exports = {
 	runProgram: runProgram,
 	scorerPrompt: scorerPrompt
 };
-
